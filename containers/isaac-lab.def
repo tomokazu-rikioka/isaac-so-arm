@@ -1,0 +1,18 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/isaac-lab:2.3.1
+Stage: build
+
+%environment
+    export OMNI_KIT_ACCEPT_EULA=YES
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt update
+    apt install -y software-properties-common
+    apt install -y git htop vim tmux wget build-essential
+    apt install -y graphviz ffmpeg curl
+
+    # uv install
+    export UV_INSTALL_DIR=/usr/local/bin
+    export UV_NO_MODIFY_PATH=1
+    curl -LsSf https://astral.sh/uv/install.sh | sh
