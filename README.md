@@ -7,42 +7,40 @@ highreso HPC クラスタ上で SO-ARM ロボットの強化学習 (Isaac Lab) �
 ## ディレクトリ構成
 
 ```
-isaac-so-arm/           # このリポジトリ
+isaac-so-arm/              # このリポジトリ (HPC 上では ~/isaac-so-arm/)
 ├── .gitignore
 ├── README.md
 ├── containers/
-│   └── isaac-lab.def   # Singularity 定義ファイル
-└── templates/
-    └── run_rl.sh.example  # Slurm テンプレート（参考用）
+│   └── isaac-lab.def      # Singularity 定義ファイル
+├── gitrepo/               # 学習コードの配置先
+│   └── isaac_so_arm101/   # git clone で取得
+└── slurm/
+    └── run_rl.sh          # Slurm バッチスクリプト
 ```
 
-HPC 上の作業ディレクトリ:
+ビルド後の追加ファイル:
 
 ```
-~/isaac/
+~/isaac-so-arm/
 ├── containers/
-│   ├── isaac-lab.def   # このリポジトリからコピー
-│   └── isaac-lab.sif   # ビルド済みイメージ
-├── gitrepo/
-│   └── isaac_so_arm101/  # 学習コード (git clone)
-└── tmp/                  # ジョブ一時ファイル
+│   └── isaac-lab.sif      # ビルド済みコンテナイメージ (.gitignore)
+└── tmp/                   # ジョブ一時ファイル (.gitignore)
 ```
 
 ## セットアップ手順
 
-### 1. 作業ディレクトリの作成
+### 1. リポジトリの clone
 
 ```bash
-mkdir -p ~/isaac/containers ~/isaac/gitrepo
+cd ~
+git clone <このリポジトリの URL> isaac-so-arm
+cd isaac-so-arm
 ```
 
 ### 2. Singularity コンテナのビルド
 
-このリポジトリの定義ファイルを使ってコンテナをビルドする。
-
 ```bash
-cd ~/isaac/containers
-cp <このリポジトリのパス>/containers/isaac-lab.def .
+cd ~/isaac-so-arm/containers
 singularity build --fakeroot isaac-lab.sif isaac-lab.def
 ```
 
@@ -55,7 +53,7 @@ ls -lh isaac-lab.sif
 ### 3. 学習リポジトリの clone
 
 ```bash
-cd ~/isaac/gitrepo
+cd ~/isaac-so-arm/gitrepo
 git clone https://github.com/MuammerBay/isaac_so_arm101.git
 cd isaac_so_arm101
 ```
@@ -65,7 +63,7 @@ cd isaac_so_arm101
 コンテナ内に入って `uv sync` を実行する。
 
 ```bash
-singularity shell --nv ~/isaac/containers/isaac-lab.sif
+singularity shell --nv ~/isaac-so-arm/containers/isaac-lab.sif
 ```
 
 コンテナ内:
@@ -75,48 +73,11 @@ uv sync
 exit
 ```
 
-### 5. Slurm バッチファイルの作成
-
-`templates/run_rl.sh.example` を参考に、HPC 上でバッチファイルを作成する。
+### 5. ジョブ投入・確認
 
 ```bash
-cd ~/isaac/gitrepo/isaac_so_arm101
-vi run_rl.sh
-```
-
-テンプレート内容 (`templates/run_rl.sh.example`):
-
-```bash
-#!/bin/bash
-#SBATCH --job-name=isaac-sim_rl_so101
-#SBATCH --nodes=1
-#SBATCH --gpus=1
-#SBATCH --partition=debug
-
-cd ~/isaac/gitrepo/isaac_so_arm101
-
-# ジョブ固有の一時領域
-export JOB_TMP="${SLURM_TMPDIR:-$HOME/isaac/tmp/$SLURM_JOB_ID}"
-mkdir -p "$JOB_TMP/IsaacLab"
-
-singularity exec --nv --writable-tmpfs \
-  --bind "$JOB_TMP/IsaacLab:/tmp/IsaacLab" \
-  ~/isaac/containers/isaac-lab.sif \
-  uv run src/isaac_so_arm101/scripts/rsl_rl/train.py \
-    --task Isaac-SO-ARM100-Reach-v0 \
-    --headless
-```
-
-実行権限を付与:
-
-```bash
-chmod +x run_rl.sh
-```
-
-### 6. ジョブ投入・確認
-
-```bash
-sbatch run_rl.sh
+cd ~/isaac-so-arm
+sbatch slurm/run_rl.sh
 ```
 
 ジョブ状態の確認:
