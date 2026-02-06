@@ -14,17 +14,9 @@ isaac-so-arm/              # このリポジトリ (HPC 上では ~/isaac-so-arm
 │   └── isaac-lab.def      # Singularity 定義ファイル
 ├── gitrepo/               # 学習コードの配置先
 │   └── isaac_so_arm101/   # git clone で取得
+├── logs/                  # Slurm ジョブログ出力先
 └── slurm/
     └── run_rl.sh          # Slurm バッチスクリプト
-```
-
-ビルド後の追加ファイル:
-
-```
-~/isaac-so-arm/
-├── containers/
-│   └── isaac-lab.sif      # ビルド済みコンテナイメージ (.gitignore)
-└── tmp/                   # ジョブ一時ファイル (.gitignore)
 ```
 
 ## セットアップ手順
@@ -77,6 +69,7 @@ exit
 
 ```bash
 cd ~/isaac-so-arm
+mkdir -p logs
 sbatch slurm/run_rl.sh
 ```
 
@@ -89,5 +82,5 @@ squeue -u $USER
 出力ログの確認:
 
 ```bash
-cat slurm-<JOB_ID>.out
+cat logs/isaac-sim_rl_so101_<JOB_ID>.log
 ```

@@ -3,6 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --gpus=1
 #SBATCH --partition=debug
+#SBATCH --output=logs/%x_%j.log
 
 cd ~/isaac-so-arm/gitrepo/isaac_so_arm101
 
