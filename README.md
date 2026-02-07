@@ -76,12 +76,7 @@ cp .env.example .env
 vi .env  # WANDB_API_KEY を記入
 ```
 
-`isaac_so_arm101` の RSL-RL エージェント設定で WandB ロガーを有効化:
-
-```python
-logger = "wandb"
-wandb_project = "so-arm"
-```
+各 Slurm スクリプトに `--logger wandb --log_project_name so-arm` が設定済みのため、ジョブ投入するだけで WandB にログが送信される。
 
 ### 6. ジョブ投入・確認
 

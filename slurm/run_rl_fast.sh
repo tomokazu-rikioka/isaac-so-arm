@@ -25,4 +25,6 @@ singularity exec --nv --writable-tmpfs \
   ~/isaac-so-arm/containers/isaac-lab.sif \
   uv run src/isaac_so_arm101/scripts/rsl_rl/train.py \
     --task Isaac-SO-ARM100-Reach-v0 \
-    --headless
+    --headless \
+    --logger wandb \
+    --log_project_name so-arm

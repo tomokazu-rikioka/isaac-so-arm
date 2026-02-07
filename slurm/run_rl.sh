@@ -29,4 +29,6 @@ singularity exec --nv --writable-tmpfs \
     --enable_cameras \
     --video \
     --video_length 200 \
-    --video_interval 2000
+    --video_interval 2000 \
+    --logger wandb \
+    --log_project_name so-arm
