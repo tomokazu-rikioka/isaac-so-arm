@@ -7,6 +7,9 @@
 
 cd ~/isaac-so-arm/gitrepo/isaac_so_arm101
 
+echo "=== Job started at $(date) on $(hostname) ==="
+echo "SLURM_JOB_ID=$SLURM_JOB_ID, CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
+
 # ジョブ固有の一時領域
 export JOB_TMP="${SLURM_TMPDIR:-$HOME/isaac-so-arm/tmp/$SLURM_JOB_ID}"
 mkdir -p "$JOB_TMP/IsaacLab"
@@ -45,5 +48,8 @@ singularity exec --nv --writable-tmpfs \
   uv run src/isaac_so_arm101/scripts/rsl_rl/train.py \
     --task Isaac-SO-ARM100-Reach-v0 \
     --headless \
+    --device cuda:0 \
     --logger wandb \
     --log_project_name so-arm
+
+echo "=== Job finished at $(date) with exit code $? ==="
