@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=isaac-sim_rl_so101
+#SBATCH --job-name=isaac-sim_play_so101
 #SBATCH --nodes=1
 #SBATCH --gpus=1
 #SBATCH --partition=debug
@@ -47,15 +47,12 @@ singularity exec --nv --writable-tmpfs \
   --env VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json \
   ${WANDB_API_KEY:+--env WANDB_API_KEY="$WANDB_API_KEY"} \
   ~/isaac-so-arm/containers/isaac-lab.sif \
-  bash -c 'unset CUDA_VISIBLE_DEVICES && exec uv run src/isaac_so_arm101/scripts/rsl_rl/train.py \
+  bash -c 'unset CUDA_VISIBLE_DEVICES && exec uv run src/isaac_so_arm101/scripts/rsl_rl/play.py \
     --task Isaac-SO-ARM100-Reach-v0 \
+    --num_envs 1 \
     --headless \
-    --run_name sample \
     --enable_cameras \
     --video \
-    --video_length 200 \
-    --video_interval 2000 \
-    --logger wandb \
-    --log_project_name so-arm'
+    --video_length 500'
 
 echo "=== Job finished at $(date) with exit code $? ==="
