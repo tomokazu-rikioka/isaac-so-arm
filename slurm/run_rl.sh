@@ -12,7 +12,7 @@ export JOB_TMP="${SLURM_TMPDIR:-$HOME/isaac-so-arm/tmp/$SLURM_JOB_ID}"
 mkdir -p "$JOB_TMP/IsaacLab"
 
 # nvidia-container-cli に graphics capability を有効にさせる（--nv 実行前に設定が必要）
-export NVIDIA_DRIVER_CAPABILITIES=all
+export NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics,display
 
 # コンテナ内で動作する Vulkan ICD JSON を生成
 mkdir -p "$JOB_TMP/vulkan/icd.d"
