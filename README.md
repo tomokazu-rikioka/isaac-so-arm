@@ -16,7 +16,9 @@ isaac-so-arm/              # このリポジトリ (HPC 上では ~/isaac-so-arm
 │   └── isaac_so_arm101/   # git clone で取得
 ├── logs/                  # Slurm ジョブログ出力先
 └── slurm/
-    └── run_rl.sh          # Slurm バッチスクリプト
+    ├── run_rl.sh          # 学習 (動画録画付き)
+    ├── run_rl_fast.sh     # 学習 (動画なし・高速)
+    └── play_rl.sh         # 学習済みモデルの再生
 ```
 
 ## セットアップ手順
@@ -52,20 +54,36 @@ cd isaac_so_arm101
 
 ### 4. Python 環境構築 (初回のみ)
 
-コンテナ内に入って `uv sync` を実行する。
+コンテナ内に入って依存をインストールする。
 
 ```bash
+cd ~/isaac-so-arm/gitrepo/isaac_so_arm101
 singularity shell --nv ~/isaac-so-arm/containers/isaac-lab.sif
-```
-
-コンテナ内:
-
-```bash
 uv sync
+uv add wandb
 exit
 ```
 
-### 5. ジョブ投入・確認
+### 5. WandB の設定
+
+学習曲線（報酬・損失・エピソード長）を [wandb.ai](https://wandb.ai) でリアルタイムに確認できる。
+
+`.env.example` をコピーして API キーを設定:
+
+```bash
+cd ~/isaac-so-arm
+cp .env.example .env
+vi .env  # WANDB_API_KEY を記入
+```
+
+`isaac_so_arm101` の RSL-RL エージェント設定で WandB ロガーを有効化:
+
+```python
+logger = "wandb"
+wandb_project = "so-arm"
+```
+
+### 6. ジョブ投入・確認
 
 ```bash
 cd ~/isaac-so-arm
@@ -84,3 +102,27 @@ squeue -u $USER
 ```bash
 cat logs/isaac-sim_rl_so101_<JOB_ID>.log
 ```
+
+学習中の動画は以下に保存される:
+
+```
+gitrepo/isaac_so_arm101/logs/rsl_rl/Isaac-SO-ARM100-Reach-v0/<timestamp>/videos/train/
+```
+
+動画をローカルにダウンロード:
+
+```bash
+rsync -avz user@highreso:~/isaac-so-arm/gitrepo/isaac_so_arm101/logs/ ./local_logs/
+```
+
+> **注**: `slurm/run_rl.sh` は動画録画付きのため学習速度が低下する。高速に学習のみ行う場合は `slurm/run_rl_fast.sh` を使用する。
+
+### 7. 学習済みモデルの再生
+
+学習後、ポリシーの動作を動画として確認:
+
+```bash
+sbatch slurm/play_rl.sh
+```
+
+動画は `logs/rsl_rl/Isaac-SO-ARM100-Reach-v0/<timestamp>/videos/` に保存される。

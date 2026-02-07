@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=isaac-sim_rl_so101
+#SBATCH --job-name=isaac-sim_play_so101
 #SBATCH --nodes=1
 #SBATCH --gpus=1
 #SBATCH --partition=debug
@@ -23,10 +23,10 @@ singularity exec --nv --writable-tmpfs \
   --bind "$JOB_TMP/IsaacLab:/tmp/IsaacLab" \
   ${WANDB_API_KEY:+--env WANDB_API_KEY="$WANDB_API_KEY"} \
   ~/isaac-so-arm/containers/isaac-lab.sif \
-  uv run src/isaac_so_arm101/scripts/rsl_rl/train.py \
+  uv run src/isaac_so_arm101/scripts/rsl_rl/play.py \
     --task Isaac-SO-ARM100-Reach-v0 \
+    --num_envs 1 \
     --headless \
     --enable_cameras \
     --video \
-    --video_length 200 \
-    --video_interval 2000
+    --video_length 500

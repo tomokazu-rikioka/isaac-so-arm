@@ -25,8 +25,4 @@ singularity exec --nv --writable-tmpfs \
   ~/isaac-so-arm/containers/isaac-lab.sif \
   uv run src/isaac_so_arm101/scripts/rsl_rl/train.py \
     --task Isaac-SO-ARM100-Reach-v0 \
-    --headless \
-    --enable_cameras \
-    --video \
-    --video_length 200 \
-    --video_interval 2000
+    --headless
