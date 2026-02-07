@@ -21,6 +21,9 @@ fi
 
 singularity exec --nv --writable-tmpfs \
   --bind "$JOB_TMP/IsaacLab:/tmp/IsaacLab" \
+  --bind /usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/nvidia_icd.json:ro \
+  --bind /usr/share/glvnd/egl_vendor.d/10_nvidia.json:/usr/share/glvnd/egl_vendor.d/10_nvidia.json:ro \
+  --env VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json \
   ${WANDB_API_KEY:+--env WANDB_API_KEY="$WANDB_API_KEY"} \
   ~/isaac-so-arm/containers/isaac-lab.sif \
   uv run src/isaac_so_arm101/scripts/rsl_rl/play.py \
