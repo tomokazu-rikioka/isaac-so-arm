@@ -16,9 +16,10 @@ isaac-so-arm/              # このリポジトリ (HPC 上では ~/isaac-so-arm
 │   └── isaac_so_arm101/   # git clone で取得
 ├── logs/                  # Slurm ジョブログ出力先
 └── slurm/
-    ├── run_rl.sh          # 学習 (動画録画付き)
-    ├── run_rl_fast.sh     # 学習 (動画なし・高速)
-    └── play_rl.sh         # 学習済みモデルの再生
+    └── template/
+        ├── run_rl.sh      # 学習 (動画録画付き)
+        ├── run_rl_fast.sh # 学習 (動画なし・高速)
+        └── play_rl.sh     # 学習済みモデルの再生
 ```
 
 ## セットアップ手順
@@ -80,7 +81,7 @@ vi .env  # WANDB_API_KEY を記入
 
 ```bash
 cd ~/isaac-so-arm
-sbatch slurm/run_rl.sh
+sbatch slurm/template/run_rl.sh
 ```
 
 ジョブ状態の確認:
@@ -107,14 +108,14 @@ gitrepo/isaac_so_arm101/logs/rsl_rl/Isaac-SO-ARM100-Reach-v0/<timestamp>/videos/
 rsync -avz user@highreso:~/isaac-so-arm/gitrepo/isaac_so_arm101/logs/ ./local_logs/
 ```
 
-> **注**: `slurm/run_rl.sh` は動画録画付きのため学習速度が低下する。高速に学習のみ行う場合は `slurm/run_rl_fast.sh` を使用する。
+> **注**: `slurm/template/run_rl.sh` は動画録画付きのため学習速度が低下する。高速に学習のみ行う場合は `slurm/template/run_rl_fast.sh` を使用する。
 
 ### 7. 学習済みモデルの再生
 
 学習後、ポリシーの動作を動画として確認:
 
 ```bash
-sbatch slurm/play_rl.sh
+sbatch slurm/template/play_rl.sh
 ```
 
 動画は `logs/rsl_rl/Isaac-SO-ARM100-Reach-v0/<timestamp>/videos/` に保存される。
