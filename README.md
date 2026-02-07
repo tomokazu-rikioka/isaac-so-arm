@@ -76,13 +76,10 @@ cp .env.example .env
 vi .env  # WANDB_API_KEY を記入
 ```
 
-各 Slurm スクリプトに `--logger wandb --log_project_name so-arm` が設定済みのため、ジョブ投入するだけで WandB にログが送信される。
-
 ### 6. ジョブ投入・確認
 
 ```bash
 cd ~/isaac-so-arm
-mkdir -p logs
 sbatch slurm/run_rl.sh
 ```
 
